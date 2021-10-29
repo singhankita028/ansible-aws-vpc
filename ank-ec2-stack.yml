@@ -36,21 +36,33 @@
             cidr_ip: 0.0.0.0/0
       register: ankELBSG_out
 
-- name: Create security group for Stack
-  ec2_group:
-    name: ankStack-sg
-    description: Allow port 22 from everywhere and all port within sg
-    region: "{{region}}"
-    vpc_id: "{{vpcid}}"
-    purge_rules: no
-    rule:
-      - proto: tcp
-        from_port: 80
-        to_port: 80
-        group_id: "{{ankELBSG_out.group_id}}"
+    - name: Create security group for Stack
+      ec2_group:
+        name: ankStack-sg
+        description: Allow port 22 from everywhere and all port within sg
+        region: "{{region}}"
+        vpc_id: "{{vpcid}}"
+        purge_rules: no
+        rule:
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            group_id: "{{ankELBSG_out.group_id}}"
 
-      - proto: tcp
-        from_port: 22
-        to_port: 22
-        group_id: "{{BastionSGid}}"
-  register: ankStackSG_out
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            group_id: "{{BastionSGid}}"
+      register: ankStackSG_out
+
+
+    - name: Update security group for Stack
+      ec2_group:
+        name: ankStack-sg
+        description: Allow port 22 from everywhere and all port within sg
+        region: "{{region}}"
+        vpc_id: "{{vpcid}}"
+        purge_rules: no
+        rule:
+          - proto: all
+            group_id: "{{ankStackSG_out.group_id}}"
