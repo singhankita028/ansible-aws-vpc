@@ -8,7 +8,7 @@
       include_vars: vars/vpc-output_vars
 
     - name: Import ank setup Variable
-        include_vars: vars/ankstacksetup
+      include_vars: vars/ankstacksetup
 
     - name: Create ec2 key
       ec2_key:
