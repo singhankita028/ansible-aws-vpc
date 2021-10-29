@@ -5,4 +5,20 @@
   gather_facts: no
   tasks:
     - name: Import VPC setup Variable
-      include_vars: vars/vpc-output_vars
+      include_vars: vars/vpc-vpc-output_vars
+
+    - name: Import ank setup Variable
+        include_vars: vars/ankstacksetup
+
+    - name: Create ec2 key
+      ec2_key:
+        name: ankkey
+        region: "{{region}}"
+      register: ankkey_out
+
+    - name: Save private key into loginkey_ank.pem
+      copy:
+        content: "{{ankkey_out.key.private_key}}"
+        dest: "./loginkey_ank.pem"
+        mode: 0600
+      when: ankkey_out.changed
